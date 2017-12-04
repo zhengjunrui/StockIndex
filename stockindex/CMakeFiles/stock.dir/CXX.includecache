@@ -1,0 +1,20 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/zhengjunrui/stockindex/stock.cpp
+stdio.h
+-
+stdlib.h
+-
+string.h
+-
+iostream
+-
+time.h
+-
+
