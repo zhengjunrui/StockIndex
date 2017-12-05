@@ -3,7 +3,7 @@
 #include <string.h>
 #include <iostream>
 #include <time.h>
-#define N 500000
+#define N 600000
 using namespace std;
 
 int getRandChar()
@@ -24,7 +24,7 @@ int getRandNum()
 }
 
 //输入字母
-char PutLetterIn()
+/*char PutLetterIn()
 {
     //int i;
     char aa;
@@ -37,14 +37,23 @@ char PutLetterIn()
     //else a-=32;
     //printf("%c\n",a);    
     return aa;  
-}
+}*/
 
 
 int main(int argc,char* argv[])
 {
-    if(argc<2)
+    if(strcmp(argv[1],"--help")==0)    //帮助文档
     {
-        printf("The command is not correct, please retype.\nIf you do not know how to type the correct command, you can input \"./stock --help\" to learn the way to input the command.\n"); 
+        printf("\nThis program is used to deal with the stock and its code. The detailed usage is as it follows:\n\n\n");
+        printf("--adding [FILE] [NUM] : Adding the first letters of pinyins and stock codes of stocks to the file.\n");
+        printf("--generate [FILE] [NUM] : Generate specified numbers of random data of stocks in the designated file.\n");
+        printf("--search [FILE][PINYIN] : Search for the stock code according to the first letters of pinyins you input.\n\n");
+        exit(0);
+    } 
+    
+    if(argc<4)
+    {
+        printf("\nThe command is not correct, please retype.\nIf you do not know how to type the correct command, you can input \"./stock --help\" to learn the way to input the command.\n\n"); 
         exit(0);  
     }     
 
@@ -58,28 +67,23 @@ int main(int argc,char* argv[])
     int a=0,b=0,c=0,i;
     char Let[15];
     char StCode[10];
-    char d[10];
+    char* d=NULL;
     char ans;
     char TempChar;
     int j;
     double start,end;
     double Time=0.0;
     double Time_Sum=0.0;
+    srand((unsigned)time(NULL)); 
 
     
-    if(strcmp(argv[1],"--help")==0)    //帮助文档
-    {
-        printf("\nThis program is used to deal with the stock and its code. The detailed usage is as it follows:\n\n\n");
-        printf("--adding [FILE] [NUM] : Adding the first letters of pinyins and stock codes of stocks to the file.\n");
-        printf("--generate [FILE] [NUM] : Generate specified numbers of random data of stocks in the designated file.\n");
-        printf("--search [FILE] : Search for the stock code according to the first letter of pinyins you input.\n\n");
-    }   
+  
     
    
     
-    if(strcmp(argv[1],"--help")!=0&&strcmp(argv[1],"--add")!=0&&strcmp(argv[1],"--generate")!=0&&strcmp(argv[1],"--search")!=0)
+    if(strcmp(argv[1],"--add")!=0&&strcmp(argv[1],"--generate")!=0&&strcmp(argv[1],"--search")!=0)
     {
-        printf("The command is not correct, please retype.\n If you do not know how to type the correct command, you can input \"./stock --help\" to learn the way to input the command.\n");   
+        printf("\nThe command is not correct, please retype.\nIf you do not know how to type the correct command, you can input \"./stock --help\" to learn the way to input the command.\n\n");
     }
     
     if(strcmp(argv[1],"--add")==0)    //数据添加（要指定一个txt文件与添加数量）
@@ -129,6 +133,7 @@ int main(int argc,char* argv[])
         {
             string SC;
             a = 3+(rand()%8);
+            //srand((unsigned)time(NULL)); 
             for(i=0;i<a;i++)
             {
                 TempChar = getRandChar();
@@ -190,41 +195,38 @@ int main(int argc,char* argv[])
             a++;
         } 
 
-        i=0;
-        printf("please input the first letter of pinyin of stock(only ONE letter),and input \"enter\" to confirm.\n");            
+        d = argv[3];
+        int Length=0;
+        while(d[i]!=NULL)   
+        {
+            if(d[i]>='a'&&d[i]<='z')
+            {
+                d[i]-=32;    //自动转大写，方便后续查询
+            }
+            if(d[i]<'A'||d[i]>'z')
+            {
+                printf("\nPlease enter the correct letters!\n\n");
+                exit(0);
+                //break;
+            }
+            i++;
+        }
+        j=0;
+        printf("\n");
         for(i=0;i<12;i++)
         {
-
-
-            d[i] = PutLetterIn();  
-            if(i!=0||d[i]!='\n')
-            {
-                Time_Sum = Time_Sum + Time;
-                printf("The time to scan file is %lf s\n",Time);
-                printf("The total time of the execution of the program %lf s\n",Time_Sum);
-                //continue;
-            }
-
-            printf("If you find the result, input '.' to exit.If not,please continue inputing the letter(Input \"Enter\" to confirm.)\n");;    
             if(d[i]=='\n')
             {
                 i--;
                 continue;
             }
-                    //start = clock();
             start = clock();
-            if(d[i]=='.')
-            {
-                printf("bye!\n");
-                break;
-            }
             for(a=0;a<N;a++)
             {                   
                 if(aa[a][0]==-1)
                 {
                     continue; 
                 } //终止循环条件
-                //    for(b=0;b<10;b++){
                 if(d[i]!='\n'&&d[i]<'A'&&d[i]>'Z') 
                 {
                     continue;
@@ -236,23 +238,32 @@ int main(int argc,char* argv[])
                 }
                 else
                 {
-                    printf("%s ",aa[a]);
-                    printf("%s",bb[a]); 
-                    printf("\n");
-                    end = clock();
-                    Time = (end-start)/CLOCKS_PER_SEC; 
+                    if(d[i+1]==NULL)
+                    {  
+                        j=1;    //判断有无查询到数据
+                        printf("%s ",aa[a]);
+                        printf("%s",bb[a]); 
+                        printf("\n");
+
+                    }
                     continue;   
                 }
+                break;
+            }
+            end = clock();
+            Time = (end-start)/CLOCKS_PER_SEC;
 
-                  // printf("n");
-                break;
-                    }
-                //d[i]=' ';
-            
-            
-            if(ans=='.')
-                break;
         }
+        
+        if(j==0)
+        {
+            printf("Sorry, we can not find the result.\n");
+        }
+        if(j==1)
+        {
+            printf("\nFinish!\n");
+        }      
+        printf("\nThe time to search the code is %lf s\n\n",Time);
         fclose(st);
     }
 
